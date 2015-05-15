@@ -78,11 +78,14 @@ module Apivore
       describe "swagger documentation" do
         before { get swagger_path }
         subject { body }
+        let(:master_swagger) {
+          req = Net::HTTP.get(@@master_swagger_uri, "/swagger.json")
+          master_swagger = JSON.parse(req)
+        }
+
         it { should be_valid_swagger }
         it { should have_models_for_all_get_endpoints }
         if @@master_swagger_uri
-          req = Net::HTTP.get(@@master_swagger_uri, "/swagger.json")
-          master_swagger = JSON.parse(req)
           it { should be_consistent_with_swagger_definitions master_swagger, @@current_service }
         end
       end
